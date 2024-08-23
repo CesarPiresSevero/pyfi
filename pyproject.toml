@@ -1,0 +1,10 @@
+[project]
+name = "pyfi"
+version = "0.0.0"
+description = "Fixed point converter with range checks"
+authors = [{name = "Cesar Severo"}]
+license = {file = "license.txt"}
+readme = "readme.md"
+keywords = ["fixed", "point", "fixed point", "converter", "fi"]
+requires-python = ">= 3.10"
+dependencies = []
