@@ -2,6 +2,15 @@
 
 This function provides the same solution as ML's fi command. The difference is that the output can actually be printed in the screen rather than creating an object. This function also have the option to return a list of values with the desired type of conversion. This function also provide error tracing, showing the values that are not corrected input for the configuration set by the user. The first value display will be in the input format.
 
+#### Installation
+
+Clone the reporitory and run the PIP editable installation:
+
+```
+					  git clone git@github.com:CesarPiresSevero/pyfi.git
+					  pip install -e pyfi
+```
+
 #### Usage
 
 This code can be used 2 ways:

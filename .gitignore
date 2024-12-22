@@ -1,8 +1,5 @@
-#Ignore Everything
-/*
+#Ignore files
+*/__pycache__
+*.egg-info
+/build
 
-#Except for:
-!.gitignore
-!*.py
-!*.md
-!*.txt
