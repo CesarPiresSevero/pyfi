@@ -6,7 +6,61 @@
 
 import math
 
-def fi(Values,Signed,TotalLen,FracLen,Format=1,ReturnVal='None'):
+
+class fi:
+    def __init__(self, signed=True, word_len=32, frac_len=31):
+        self._signed = signed
+        self._word_len = word_len
+        _bits = self._word_len
+        if(self._signed == True):
+            _bits -= 1
+        if(value <= _bits):
+            self._frac_len = value
+        
+    # Signed getter and setter
+    @property
+    def signed(self):
+        return self._signed
+
+    @signed.setter
+    def signed(self, value):
+        if(type(value) == bool):
+            self._signed = value
+
+    # Word length getter and setter
+    @property
+    def word_len(self):
+        return self._word_len
+
+    @word_len.setter
+    def wordl_len(self, value):
+        self._word_len = value
+
+    # Fractional length getter and setter
+    @property
+    def frac_len(self):
+        return self._frac_len
+
+    @frac_len.setter
+    def frac_len(self, value):
+        _bits = self._word_len
+        if(self._signed == True):
+            _bits -= 1
+        if(value <= _bits):
+            self._frac_len = value
+
+    def __call__(self, value, fixed=True):
+        pass
+
+    def get_fixed(self, value):
+        pass
+
+    def get_float(self, value):
+        pass
+
+
+
+def fi(Values,signed,word_len,frac_len,Format=1,ReturnVal='None'):
     '''
         Description
         -----------
@@ -39,9 +93,9 @@ def fi(Values,Signed,TotalLen,FracLen,Format=1,ReturnVal='None'):
                       * For dec to hex or bin conversion the values need to be in
                        dec format and for hex or bin to dec conversion values 
                        need to be bigger than 1
-            - Signed: Check if the value is signed (1) or unsigned (0)
-            - TotalLen: The total number of bits used
-            - FracLen: The number of bits used to represent the fractional part
+            - signed: Check if the value is signed (1) or unsigned (0)
+            - word_len: The total number of bits used
+            - frac_len: The number of bits used to represent the fractional part
             - Format: Check if the input is decimal (1) or hex/bin (0)
             - ReturnVal: Check if the function returns value or just prints
                         * "None": returns None, only prints values
@@ -65,13 +119,13 @@ def fi(Values,Signed,TotalLen,FracLen,Format=1,ReturnVal='None'):
         print("\nFIXED POINT CONVERSION\n")
         if(Format): print("-Type of conversion:","Decimal to Hex/Bin")
         else: print("-Type of conversion:","Hex/Bin to Decimal")
-        if(Signed): print("-Signedness:","Signed")
-        else: print("-Signedness:","Unsigned")
-        print("-Total bits:",TotalLen)
-        print("-Fractional bits:",FracLen)
+        if(signed): print("-signedness:","signed")
+        else: print("-signedness:","Unsigned")
+        print("-Total bits:",word_len)
+        print("-Fractional bits:",frac_len)
 
     #Calculating fractional digits to represent dec
-    Precision=math.ceil(FracLen/3)
+    Precision=math.ceil(frac_len/3)
     Precision_txt="{:."+str(Precision)+"f}"
 
     #Converting input type to list
@@ -81,41 +135,41 @@ def fi(Values,Signed,TotalLen,FracLen,Format=1,ReturnVal='None'):
     #Decimal
     if(Format):
         #Check if it is signed
-        if(Signed):
+        if(signed):
             for val in Values:
                 #Check if it is positive value
                 if(val>0):
                     dec_text=dec_text+Precision_txt.format(val)+","
                     #Check if value is above the limit
-                    if(val>(2**(TotalLen-FracLen)-(2**(TotalLen-FracLen-1)))):
-                        if(ReturnVal=='None'): print("\nERROR: Value is too high, range from",(2**(TotalLen-FracLen)-(2**(TotalLen-FracLen-1))),"to",-(2**(TotalLen-FracLen)-(2**(TotalLen-FracLen-1)))," ( value:",val," index:",Values.index(val),")")
+                    if(val>(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))):
+                        if(ReturnVal=='None'): print("\nERROR: Value is too high, range from",(2**(word_len-frac_len)-(2**(word_len-frac_len-1))),"to",-(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))," ( value:",val," index:",Values.index(val),")")
                         return None
-                    elif(val==(2**(TotalLen-FracLen)-(2**(TotalLen-FracLen-1)))):
-                        if(ReturnVal=='None'): print("WARNING:",(2**(TotalLen-FracLen)-(2**(TotalLen-FracLen-1))),"can not be represented,",round(((2**(TotalLen-FracLen)-(2**(TotalLen-FracLen-1)))-1/(2**TotalLen)),Precision),"will be used instead","( index:",Values.index(val),")")
-                        val=(2**(TotalLen-FracLen)-(2**(TotalLen-FracLen-1)))-1/(2**TotalLen)
+                    elif(val==(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))):
+                        if(ReturnVal=='None'): print("WARNING:",(2**(word_len-frac_len)-(2**(word_len-frac_len-1))),"can not be represented,",round(((2**(word_len-frac_len)-(2**(word_len-frac_len-1)))-1/(2**word_len)),Precision),"will be used instead","( index:",Values.index(val),")")
+                        val=(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))-1/(2**word_len)
                         dec_text=''
                         dec_text=dec_text+Precision_txt.format(val)+","
-                    num=math.ceil(val*(2**(TotalLen-(TotalLen-FracLen))))
-                    if(num>=(2**TotalLen)/2): num=num-1
+                    num=math.ceil(val*(2**(word_len-(word_len-frac_len))))
+                    if(num>=(2**word_len)/2): num=num-1
                     #Check if value is less than minimal possible
                     if(num<=0):
                         num=0
-                    hex_text=hex_text+("0x"+hex(num)[2:].zfill(int(TotalLen/4)))+","
-                    bin_text=bin_text+("0b"+bin(num)[2:].zfill(TotalLen))+","   
+                    hex_text=hex_text+("0x"+hex(num)[2:].zfill(int(word_len/4)))+","
+                    bin_text=bin_text+("0b"+bin(num)[2:].zfill(word_len))+","   
                     if(ReturnVal!='None'): 
                         dec_vals.append(val)                            
                 #If negative
                 else:
                     #Check if value is above the limit
-                    if((-1)*val>(2**(TotalLen-FracLen)-(2**(TotalLen-FracLen-1)))):
-                        if(ReturnVal=='None'): print("\nERROR: Value is too low, range from",(2**(TotalLen-FracLen)-(2**(TotalLen-FracLen-1))),"to",-(2**(TotalLen-FracLen)-(2**(TotalLen-FracLen-1)))," ( value:",val," index:",Values.index(val),")")
+                    if((-1)*val>(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))):
+                        if(ReturnVal=='None'): print("\nERROR: Value is too low, range from",(2**(word_len-frac_len)-(2**(word_len-frac_len-1))),"to",-(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))," ( value:",val," index:",Values.index(val),")")
                         return None
-                    num=(2**TotalLen)+(2**(TotalLen-FracLen))+int(val*(2**(TotalLen-(TotalLen-FracLen)))-(2**(TotalLen-FracLen)))
+                    num=(2**word_len)+(2**(word_len-frac_len))+int(val*(2**(word_len-(word_len-frac_len)))-(2**(word_len-frac_len)))
                     #Check if value is less than minimal possible
-                    if(num==2**TotalLen):
+                    if(num==2**word_len):
                         num=0
-                    hex_text=hex_text+("0x"+hex(num)[2:].zfill(int(TotalLen/4)))+","
-                    bin_text=bin_text+("0b"+bin(num)[2:].zfill(TotalLen))+","   
+                    hex_text=hex_text+("0x"+hex(num)[2:].zfill(int(word_len/4)))+","
+                    bin_text=bin_text+("0b"+bin(num)[2:].zfill(word_len))+","   
                     dec_text=dec_text+Precision_txt.format(val)+"," 
                     if(ReturnVal!='None'): 
                         dec_vals.append(val)
@@ -127,12 +181,12 @@ def fi(Values,Signed,TotalLen,FracLen,Format=1,ReturnVal='None'):
                 if(val<0):
                     if(ReturnVal=='None'): print("\nERROR: Negative value ( value:",val," index:",Values.index(val),")")
                     return None
-                if(val>2**(TotalLen-FracLen)):
+                if(val>2**(word_len-frac_len)):
                     if(ReturnVal=='None'): print("\nERROR: Value is too high ( value:",val," index:",Values.index(val),")")
                     return None
-                num=math.ceil(val*(2**(TotalLen-(TotalLen-FracLen)))-1)
-                hex_text=hex_text+("0x"+hex(num)[2:].zfill(int(TotalLen/4)))+","
-                bin_text=bin_text+("0b"+bin(num)[2:].zfill(TotalLen))+","   
+                num=math.ceil(val*(2**(word_len-(word_len-frac_len)))-1)
+                hex_text=hex_text+("0x"+hex(num)[2:].zfill(int(word_len/4)))+","
+                bin_text=bin_text+("0b"+bin(num)[2:].zfill(word_len))+","   
                 dec_text=dec_text+Precision_txt.format(val)+","
                 if(ReturnVal!='None'): 
                     dec_vals.append(round(val,Precision))
@@ -151,31 +205,31 @@ def fi(Values,Signed,TotalLen,FracLen,Format=1,ReturnVal='None'):
     #Hex or Bin
     else:
         #Check if it is signed
-        if(Signed):
+        if(signed):
             for val in Values:
                 if(val<1 and val!=0):
                     if(ReturnVal=='None'): print("\nERROR: Wrong input Value, change the conversion type ( value:",val," index:",Values.index(val),")")
                     return None
                 #Check if it is positive value
-                if(val<(2**(TotalLen-1))):
-                    dec_text=dec_text+Precision_txt.format(val/(2**(TotalLen-(TotalLen-FracLen))))+","
-                    if(ReturnVal!='None'): dec_vals.append(round((val/(2**(TotalLen-(TotalLen-FracLen)))),Precision))
+                if(val<(2**(word_len-1))):
+                    dec_text=dec_text+Precision_txt.format(val/(2**(word_len-(word_len-frac_len))))+","
+                    if(ReturnVal!='None'): dec_vals.append(round((val/(2**(word_len-(word_len-frac_len)))),Precision))
                 else:
-                    dec_text=dec_text+Precision_txt.format(val/(2**(TotalLen-(TotalLen-FracLen)))-(2**(TotalLen-FracLen)))+","
-                    if(ReturnVal!='None'):  dec_vals.append(round((val/(2**(TotalLen-(TotalLen-FracLen)))-(2**(TotalLen-FracLen))),Precision))
-                hex_text=hex_text+("0x"+hex(val)[2:].zfill(int(TotalLen/4)))+","
-                bin_text=bin_text+("0b"+bin(val)[2:].zfill(TotalLen))+","
+                    dec_text=dec_text+Precision_txt.format(val/(2**(word_len-(word_len-frac_len)))-(2**(word_len-frac_len)))+","
+                    if(ReturnVal!='None'):  dec_vals.append(round((val/(2**(word_len-(word_len-frac_len)))-(2**(word_len-frac_len))),Precision))
+                hex_text=hex_text+("0x"+hex(val)[2:].zfill(int(word_len/4)))+","
+                bin_text=bin_text+("0b"+bin(val)[2:].zfill(word_len))+","
         #If unsigned
         else:
             for val in Values:
                 if(val<1 and val!=0):
                     if(ReturnVal=='None'): print("\nERROR: Wrong input Value, change the conversion type ( value:",val," index:",Values.index(val),")")
                     return None
-                dec_text=dec_text+Precision_txt.format(val/(2**(TotalLen-(TotalLen-FracLen))))+","
-                hex_text=hex_text+("0x"+hex(val)[2:].zfill(int(TotalLen/4)))+","
-                bin_text=bin_text+("0b"+bin(val)[2:].zfill(TotalLen))+","
+                dec_text=dec_text+Precision_txt.format(val/(2**(word_len-(word_len-frac_len))))+","
+                hex_text=hex_text+("0x"+hex(val)[2:].zfill(int(word_len/4)))+","
+                bin_text=bin_text+("0b"+bin(val)[2:].zfill(word_len))+","
                 if(ReturnVal!='None'): 
-                    dec_vals.append(round((val/(2**(TotalLen-(TotalLen-FracLen)))),Precision))
+                    dec_vals.append(round((val/(2**(word_len-(word_len-frac_len)))),Precision))
 
         #Output Values
         if(ReturnVal=='None'):
@@ -187,6 +241,189 @@ def fi(Values,Signed,TotalLen,FracLen,Format=1,ReturnVal='None'):
         if(ReturnVal=='Dec'): return dec_vals
         elif(ReturnVal=='Hex'): return hex_text[:-1]
         elif(ReturnVal=='Bin'): return bin_text[:-1]
+
+
+# def fi(Values,signed,word_len,frac_len,Format=1,ReturnVal='None'):
+#     '''
+#         Description
+#         -----------
+#             This function provides a similar solution to  ML's fi difference being
+#             that the output can actually be printed on the screen rather than 
+#             creating an fi object for fixed-point arithmetic. This function also
+#             has the option to return a list of values with the desired type of
+#             conversion and provides error tracing, alerting the user of values 
+#             that don't match the expected outcome. The first value display will be
+#             in the input format.
+#             - This code can be used 2 ways:
+#             1- As a library by adding the following line in your code:
+# 
+#                                   from pyfi import fi
+# 
+#                 IMPORTANT: remember to have this file in the same folder as the 
+#                            file you will be calling fi function from
+#             2- As a standalone conversion code. Hence you can run this code using 
+#             command line like shown below:
+# 
+#                                     python pyfi.py
+# 
+#                 IMPORTANT: remember to have terminal/prompt opened in the same 
+#                 folder as this file
+#         Parameters
+#         ----------
+#             - Values: The input values of the function.
+#                       * The input is a PYTHON LIST of any size 
+#                         (can accept also one INT or FLOAT)
+#                       * For dec to hex or bin conversion the values need to be in
+#                        dec format and for hex or bin to dec conversion values 
+#                        need to be bigger than 1
+#             - signed: Check if the value is signed (1) or unsigned (0)
+#             - word_len: The total number of bits used
+#             - frac_len: The number of bits used to represent the fractional part
+#             - Format: Check if the input is decimal (1) or hex/bin (0)
+#             - ReturnVal: Check if the function returns value or just prints
+#                         * "None": returns None, only prints values
+#                         * "Dec" : returns a list of decimal values
+#                         * "Hex" : returns a string of hex values
+#                         * "Bin" : returns a string of bin values
+#         
+#         Notes
+#         -------
+#         There are some examples in the bottom of the function. To use them
+#         UNCOMMENT the necessary code.
+#     '''
+# 
+#     #Converting values
+#     dec_text=""
+#     hex_text=""
+#     bin_text=""
+#     dec_vals=[]
+#     if(ReturnVal=='None'):
+#         #Printing header
+#         print("\nFIXED POINT CONVERSION\n")
+#         if(Format): print("-Type of conversion:","Decimal to Hex/Bin")
+#         else: print("-Type of conversion:","Hex/Bin to Decimal")
+#         if(signed): print("-signedness:","signed")
+#         else: print("-signedness:","Unsigned")
+#         print("-Total bits:",word_len)
+#         print("-Fractional bits:",frac_len)
+# 
+#     #Calculating fractional digits to represent dec
+#     Precision=math.ceil(frac_len/3)
+#     Precision_txt="{:."+str(Precision)+"f}"
+# 
+#     #Converting input type to list
+#     if(type(Values)==int or type(Values)==float):
+#         Values=[Values]
+# 
+#     #Decimal
+#     if(Format):
+#         #Check if it is signed
+#         if(signed):
+#             for val in Values:
+#                 #Check if it is positive value
+#                 if(val>0):
+#                     dec_text=dec_text+Precision_txt.format(val)+","
+#                     #Check if value is above the limit
+#                     if(val>(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))):
+#                         if(ReturnVal=='None'): print("\nERROR: Value is too high, range from",(2**(word_len-frac_len)-(2**(word_len-frac_len-1))),"to",-(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))," ( value:",val," index:",Values.index(val),")")
+#                         return None
+#                     elif(val==(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))):
+#                         if(ReturnVal=='None'): print("WARNING:",(2**(word_len-frac_len)-(2**(word_len-frac_len-1))),"can not be represented,",round(((2**(word_len-frac_len)-(2**(word_len-frac_len-1)))-1/(2**word_len)),Precision),"will be used instead","( index:",Values.index(val),")")
+#                         val=(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))-1/(2**word_len)
+#                         dec_text=''
+#                         dec_text=dec_text+Precision_txt.format(val)+","
+#                     num=math.ceil(val*(2**(word_len-(word_len-frac_len))))
+#                     if(num>=(2**word_len)/2): num=num-1
+#                     #Check if value is less than minimal possible
+#                     if(num<=0):
+#                         num=0
+#                     hex_text=hex_text+("0x"+hex(num)[2:].zfill(int(word_len/4)))+","
+#                     bin_text=bin_text+("0b"+bin(num)[2:].zfill(word_len))+","   
+#                     if(ReturnVal!='None'): 
+#                         dec_vals.append(val)                            
+#                 #If negative
+#                 else:
+#                     #Check if value is above the limit
+#                     if((-1)*val>(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))):
+#                         if(ReturnVal=='None'): print("\nERROR: Value is too low, range from",(2**(word_len-frac_len)-(2**(word_len-frac_len-1))),"to",-(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))," ( value:",val," index:",Values.index(val),")")
+#                         return None
+#                     num=(2**word_len)+(2**(word_len-frac_len))+int(val*(2**(word_len-(word_len-frac_len)))-(2**(word_len-frac_len)))
+#                     #Check if value is less than minimal possible
+#                     if(num==2**word_len):
+#                         num=0
+#                     hex_text=hex_text+("0x"+hex(num)[2:].zfill(int(word_len/4)))+","
+#                     bin_text=bin_text+("0b"+bin(num)[2:].zfill(word_len))+","   
+#                     dec_text=dec_text+Precision_txt.format(val)+"," 
+#                     if(ReturnVal!='None'): 
+#                         dec_vals.append(val)
+# 
+#         #If unsigned
+#         else:
+#             for val in Values:
+#                 #Check if it is positive value
+#                 if(val<0):
+#                     if(ReturnVal=='None'): print("\nERROR: Negative value ( value:",val," index:",Values.index(val),")")
+#                     return None
+#                 if(val>2**(word_len-frac_len)):
+#                     if(ReturnVal=='None'): print("\nERROR: Value is too high ( value:",val," index:",Values.index(val),")")
+#                     return None
+#                 num=math.ceil(val*(2**(word_len-(word_len-frac_len)))-1)
+#                 hex_text=hex_text+("0x"+hex(num)[2:].zfill(int(word_len/4)))+","
+#                 bin_text=bin_text+("0b"+bin(num)[2:].zfill(word_len))+","   
+#                 dec_text=dec_text+Precision_txt.format(val)+","
+#                 if(ReturnVal!='None'): 
+#                     dec_vals.append(round(val,Precision))
+#             
+#         #Output Values
+#         if(ReturnVal=='None'):
+#             print("\n-Dec Values:",dec_text[:-1])
+#             print("\n-Hex Values:",hex_text[:-1])
+#             print("\n-Bin Values:",bin_text[:-1])
+# 
+#         #Returning values
+#         if(ReturnVal=='Dec'): return dec_vals
+#         elif(ReturnVal=='Hex'): return hex_text[:-1]
+#         elif(ReturnVal=='Bin'): return bin_text[:-1]
+# 
+#     #Hex or Bin
+#     else:
+#         #Check if it is signed
+#         if(signed):
+#             for val in Values:
+#                 if(val<1 and val!=0):
+#                     if(ReturnVal=='None'): print("\nERROR: Wrong input Value, change the conversion type ( value:",val," index:",Values.index(val),")")
+#                     return None
+#                 #Check if it is positive value
+#                 if(val<(2**(word_len-1))):
+#                     dec_text=dec_text+Precision_txt.format(val/(2**(word_len-(word_len-frac_len))))+","
+#                     if(ReturnVal!='None'): dec_vals.append(round((val/(2**(word_len-(word_len-frac_len)))),Precision))
+#                 else:
+#                     dec_text=dec_text+Precision_txt.format(val/(2**(word_len-(word_len-frac_len)))-(2**(word_len-frac_len)))+","
+#                     if(ReturnVal!='None'):  dec_vals.append(round((val/(2**(word_len-(word_len-frac_len)))-(2**(word_len-frac_len))),Precision))
+#                 hex_text=hex_text+("0x"+hex(val)[2:].zfill(int(word_len/4)))+","
+#                 bin_text=bin_text+("0b"+bin(val)[2:].zfill(word_len))+","
+#         #If unsigned
+#         else:
+#             for val in Values:
+#                 if(val<1 and val!=0):
+#                     if(ReturnVal=='None'): print("\nERROR: Wrong input Value, change the conversion type ( value:",val," index:",Values.index(val),")")
+#                     return None
+#                 dec_text=dec_text+Precision_txt.format(val/(2**(word_len-(word_len-frac_len))))+","
+#                 hex_text=hex_text+("0x"+hex(val)[2:].zfill(int(word_len/4)))+","
+#                 bin_text=bin_text+("0b"+bin(val)[2:].zfill(word_len))+","
+#                 if(ReturnVal!='None'): 
+#                     dec_vals.append(round((val/(2**(word_len-(word_len-frac_len)))),Precision))
+# 
+#         #Output Values
+#         if(ReturnVal=='None'):
+#             print("\n-Bin Values:",bin_text[:-1])
+#             print("\n-Hex Values:",hex_text[:-1])
+#             print("\n-Dec Values:",dec_text[:-1])
+# 
+#         #Returning values
+#         if(ReturnVal=='Dec'): return dec_vals
+#         elif(ReturnVal=='Hex'): return hex_text[:-1]
+#         elif(ReturnVal=='Bin'): return bin_text[:-1]
 
 
 ######### Examples #########
