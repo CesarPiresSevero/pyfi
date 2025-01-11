@@ -22,7 +22,25 @@ def precision_loss():
     """
     Using PyFi to estimate precision loss for fixed point multiplications.
     """
-    pass
+    # Creating the FI class and changing format to Q15
+    fi_obj = fi()
+    fi_obj.word_len = 16
+    fi_obj.frac_len = 15
+#     fi_obj.return_val = True
+    fi_obj.return_val = False
+    
+    # Multiplying the value one in a loop to check precision loss
+    value = 1.0
+    iterations = 100
+    fi_obj(value)
+
+    fi_obj.fixed = False
+    fi_obj(0x7FFF)
+    print(0x7FFF)
+#     for i in range(iterations):
+#         fixed_value = fi_obj(value)
+        
+
 
 
 if __name__ == "__main__":
