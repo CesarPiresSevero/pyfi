@@ -1,8 +1,8 @@
-##############################################################################
-#                                                                            #
-#                         Python Fixed Point                                 #
-#                                                                            #
-##############################################################################
+###################################################################################################
+#                                                                                                 #
+#                                    Python Fixed Point                                           #
+#                                                                                                 #
+###################################################################################################
 
 import math
 
@@ -164,13 +164,11 @@ class fi:
                                 -limit_val, " ( value:", val, " index:", values.index(val),")")
                         return None
                     elif(val == limit_val):
+                        check_val = round((limit_val - 1 / (2**self._word_len)), precision) 
                         if(self._return_val == False): 
-                            check_val = round((limit_val - 1 / (2**self._word_len)), precision) 
-                            print("WARNING:", limit_val, "can not be represented,", check_val, 
+                            print("WARNING:", val, "can not be represented,", check_val, 
                                   "will be used instead", "( index:", values.index(val) ,")")
-                            val = check_val
-                        else:
-                            val = (limit_val - 1)/(2**self._word_len)
+                        val = check_val
                         dec_text = ''
                         dec_text = dec_text + precision_txt.format(val) + ","
                     num = math.ceil(val*(2**(self._word_len - (self._word_len - self._frac_len))))
@@ -182,7 +180,7 @@ class fi:
                     hex_text = hex_text + ("0x" + hex(num)[2:].zfill(int(self._word_len/4))) + ","
                     bin_text = bin_text + ("0b"+bin(num)[2:].zfill(self._word_len)) + ","   
                     if(self._return_val != False): 
-                        out_vals.append(val)                            
+                        out_vals.append(num)                            
                 #If negative
                 else:
                     #Check if value is above the limit
@@ -201,7 +199,7 @@ class fi:
                     bin_text = bin_text + ("0b" + bin(num)[2:].zfill(self._word_len)) + ","   
                     dec_text = dec_text + precision_txt.format(val) + "," 
                     if(self._return_val != False): 
-                        out_vals.append(val)
+                        out_vals.append(num)
 
         #If unsigned
         else:
@@ -222,7 +220,7 @@ class fi:
                 bin_text = bin_text + ("0b" + bin(num)[2:].zfill(self._word_len)) + ","   
                 dec_text = dec_text + precision_txt.format(val) + ","
                 if(self._return_val != False): 
-                    out_vals.append(round(val, precision))
+                    out_vals.append(num)
             
         #Output values
         if(self._return_val == False):
@@ -348,8 +346,10 @@ class fi:
             print("-Fractional bits:", self._frac_len)
 
         #Converting input type to list
+        input_type_list = True
         if(type(value) == int or type(value) == float):
             values = [value]
+            input_type_list = False
         else:
             values = value
 
@@ -361,6 +361,11 @@ class fi:
         else:
             converted_values = self._convert_to_float(values)
         
-        #Returning the converted values
-        return converted_values
+        #Returning the converted values with same type as input
+        if(self._return_val):
+            if(input_type_list):
+                return converted_values
+            else:
+                return converted_values[0]
+            
 
