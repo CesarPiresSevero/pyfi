@@ -86,7 +86,8 @@ class fi:
 
     @word_len.setter
     def wordl_len(self, value):
-        self._word_len = value
+        if(type(value) == int):
+            self._word_len = value
 
     # Fractional length getter and setter
     @property
@@ -98,7 +99,7 @@ class fi:
         _bits = self._word_len
         if(self._signed == True):
             _bits -= 1
-        if(value <= _bits):
+        if(value <= _bits and type(value) == int):
             self._frac_len = value
 
     # Format (fixed/float) getter and setter
@@ -147,76 +148,92 @@ class fi:
         out_vals = []
 
         #Calculating fractional digits to represent floats
-        precision = math.ceil(frac_len/3)
-        precision_txt = "{:."+str(precision)+"f}"
+        precision = math.ceil(self._frac_len/3)
+        precision_txt = "{:." + str(precision) + "f}"
 
         #Check if it is signed
-        if(signed):
+        if(self._signed):
             for val in values:
+                #Calculate numerical limit 
+                limit_val = 2**(self._word_len - self._frac_len) - (2**(self._word_len - self._frac_len - 1)) 
                 #Check if it is positive value
-                if(val>0):
-                    dec_text=dec_text+precision_txt.format(val)+","
+                if(val > 0):
+                    dec_text = dec_text + precision_txt.format(val)+ ","
                     #Check if value is above the limit
-                    if(val>(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))):
-                        if(return_val=='None'): print("\nERROR: Value is too high, range from",(2**(word_len-frac_len)-(2**(word_len-frac_len-1))),"to",-(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))," ( value:",val," index:",values.index(val),")")
+                    if(val > limit_val):
+                        if(self._return_val == False): 
+                            print("\nERROR: Value is too high, range from", limit_val, "to",
+                                -limit_val, " ( value:", val, " index:", values.index(val),")")
                         return None
-                    elif(val==(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))):
-                        if(return_val=='None'): print("WARNING:",(2**(word_len-frac_len)-(2**(word_len-frac_len-1))),"can not be represented,",round(((2**(word_len-frac_len)-(2**(word_len-frac_len-1)))-1/(2**word_len)),precision),"will be used instead","( index:",values.index(val),")")
-                        val=(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))-1/(2**word_len)
-                        dec_text=''
-                        dec_text=dec_text+precision_txt.format(val)+","
-                    num=math.ceil(val*(2**(word_len-(word_len-frac_len))))
-                    if(num>=(2**word_len)/2): num=num-1
+                    elif(val == limit_val):
+                        if(self._return_val == False): 
+                            print("WARNING:", limit_val, "can not be represented,", 
+                                round((limit_val - 1 / (2**self._word_len)), precision), 
+                                "will be used instead", "( index:", values.index(val) ,")")
+                        val = (limit_val - 1)/(2**self._word_len)
+                        dec_text = ''
+                        dec_text = dec_text + precision_txt.format(val) + ","
+                    num = math.ceil(val*(2**(self._word_len - (self._word_len - self._frac_len))))
+                    if(num >= (2**self._word_len)/2): 
+                        num = num - 1
                     #Check if value is less than minimal possible
-                    if(num<=0):
-                        num=0
-                    hex_text=hex_text+("0x"+hex(num)[2:].zfill(int(word_len/4)))+","
-                    bin_text=bin_text+("0b"+bin(num)[2:].zfill(word_len))+","   
-                    if(return_val!='None'): 
+                    if(num <= 0):
+                        num = 0
+                    hex_text = hex_text + ("0x" + hex(num)[2:].zfill(int(self._word_len/4))) + ","
+                    bin_text = bin_text + ("0b"+bin(num)[2:].zfill(self._word_len)) + ","   
+                    if(self._return_val != False): 
                         out_vals.append(val)                            
                 #If negative
                 else:
                     #Check if value is above the limit
-                    if((-1)*val>(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))):
-                        if(return_val=='None'): print("\nERROR: Value is too low, range from",(2**(word_len-frac_len)-(2**(word_len-frac_len-1))),"to",-(2**(word_len-frac_len)-(2**(word_len-frac_len-1)))," ( value:",val," index:",values.index(val),")")
+                    if((-1)*val > limit_val):
+                        if(self._return_val == False):
+                            print("\nERROR: Value is too low, range from", limit_val, "to", 
+                                -limit_val, " ( value:", val, " index:", values.index(val), ")")
                         return None
-                    num=(2**word_len)+(2**(word_len-frac_len))+int(val*(2**(word_len-(word_len-frac_len)))-(2**(word_len-frac_len)))
+                    num = (2**self._word_len) + (2**(self._word_len - self._frac_len)) + int(val*(2**(self._word_len 
+                        -(self._word_len - self._frac_len))) - (2**(self._word_len - self._frac_len)))
                     #Check if value is less than minimal possible
-                    if(num==2**word_len):
-                        num=0
-                    hex_text=hex_text+("0x"+hex(num)[2:].zfill(int(word_len/4)))+","
-                    bin_text=bin_text+("0b"+bin(num)[2:].zfill(word_len))+","   
-                    dec_text=dec_text+precision_txt.format(val)+"," 
-                    if(return_val!='None'): 
+                    if(num == 2**self._word_len):
+                        num = 0
+                    hex_text = hex_text+("0x" + hex(num)[2:].zfill(int(self._word_len/4))) + ","
+                    bin_text = bin_text + ("0b" + bin(num)[2:].zfill(self._word_len)) + ","   
+                    dec_text = dec_text + precision_txt.format(val) + "," 
+                    if(self._return_val != False): 
                         out_vals.append(val)
 
         #If unsigned
         else:
             for val in values:
                 #Check if it is positive value
-                if(val<0):
-                    if(return_val=='None'): print("\nERROR: Negative value ( value:",val," index:",values.index(val),")")
+                if(val < 0):
+                    if(self._return_val == False):
+                        print("\nERROR: Negative value ( value:", val, " index:", 
+                            values.index(val), ")")
                     return None
-                if(val>2**(word_len-frac_len)):
-                    if(return_val=='None'): print("\nERROR: Value is too high ( value:",val," index:",values.index(val),")")
+                if(val > 2**(self._word_len - self._frac_len)):
+                    if(self._return_val == False):
+                        print("\nERROR: Value is too high ( value:", val, " index:", 
+                            values.index(val),")")
                     return None
-                num=math.ceil(val*(2**(word_len-(word_len-frac_len)))-1)
-                hex_text=hex_text+("0x"+hex(num)[2:].zfill(int(word_len/4)))+","
-                bin_text=bin_text+("0b"+bin(num)[2:].zfill(word_len))+","   
-                dec_text=dec_text+precision_txt.format(val)+","
-                if(return_val!='None'): 
-                    out_vals.append(round(val,precision))
+                num = math.ceil(val*(2**(self._word_len - (self._word_len - self._frac_len))) - 1)
+                hex_text = hex_text + ("0x" + hex(num)[2:].zfill(int(self._word_len/4))) + ","
+                bin_text = bin_text + ("0b" + bin(num)[2:].zfill(self._word_len)) + ","   
+                dec_text = dec_text + precision_txt.format(val) + ","
+                if(self._return_val != False): 
+                    out_vals.append(round(val, precision))
             
         #Output values
-        if(return_val=='None'):
-            print("\n-Dec values:",dec_text[:-1])
-            print("\n-Hex values:",hex_text[:-1])
-            print("\n-Bin values:",bin_text[:-1])
+        if(self._return_val == False):
+            print("\nConverted values:")
+            print("-Dec (Input):", dec_text[:-1])
+            print("-Hex (Output):", hex_text[:-1])
+            print("-Bin (Output):", bin_text[:-1])
 
         #Returning values
-        if(return_val=='Dec'): return out_vals
-        elif(return_val=='Hex'): return hex_text[:-1]
-        elif(return_val=='Bin'): return bin_text[:-1]
+#         if(self._return_val =='Dec'): return out_vals
+#         elif(self._return_val =='Hex'): return hex_text[:-1]
+#         elif(self._return_val =='Bin'): return bin_text[:-1]
 
     # Converts input fixed values to floating point
     def _convert_to_float(self, values):
@@ -244,46 +261,59 @@ class fi:
         out_vals = []
 
         #Calculating fractional digits to represent floats
-        precision = math.ceil(frac_len/3)
-        precision_txt = "{:."+str(precision)+"f}"
+        precision = math.ceil(self._frac_len/3)
+        precision_txt = "{:." + str(precision) + "f}"
 
         #Check if it is signed
-        if(signed):
+        if(self._signed):
             for val in values:
-                if(val<1 and val!=0):
-                    if(return_val=='None'): print("\nERROR: Wrong input Value, change the conversion type ( value:",val," index:",values.index(val),")")
+                if(val < 1 and val != 0):
+                    if(self._return_val == False):
+                        print("\nERROR: Wrong input Value, change the conversion type ( value:", 
+                            val," index:", values.index(val), ")")
                     return None
                 #Check if it is positive value
-                if(val<(2**(word_len-1))):
-                    dec_text=dec_text+precision_txt.format(val/(2**(word_len-(word_len-frac_len))))+","
-                    if(return_val!='None'): out_vals.append(round((val/(2**(word_len-(word_len-frac_len)))),precision))
+                if(val < (2**(self._word_len - 1))):
+                    dec_text = dec_text + precision_txt.format(val/(2**(self._word_len - (self._word_len - 
+                        self._frac_len)))) + ","
+                    if(self._return_val != False):
+                        out_vals.append(round((val/(2**(self._word_len - (self._word_len - self._frac_len)))), 
+                            precision))
                 else:
-                    dec_text=dec_text+precision_txt.format(val/(2**(word_len-(word_len-frac_len)))-(2**(word_len-frac_len)))+","
-                    if(return_val!='None'):  out_vals.append(round((val/(2**(word_len-(word_len-frac_len)))-(2**(word_len-frac_len))),precision))
-                hex_text=hex_text+("0x"+hex(val)[2:].zfill(int(word_len/4)))+","
-                bin_text=bin_text+("0b"+bin(val)[2:].zfill(word_len))+","
+                    dec_text = dec_text + precision_txt.format(val/(2**(self._word_len - 
+                        (self._word_len - self._frac_len))) - (2**(self._word_len - self._frac_len))) + ","
+                    if(self._return_val != False): 
+                        out_vals.append(round((val/(2**(self._word_len - (self._word_len - self._frac_len))) - 
+                            (2**(self._word_len - self._frac_len))), precision))
+                hex_text = hex_text + ("0x" + hex(val)[2:].zfill(int(self._word_len/4))) + ","
+                bin_text = bin_text + ("0b" + bin(val)[2:].zfill(self._word_len)) + ","
         #If unsigned
         else:
             for val in values:
-                if(val<1 and val!=0):
-                    if(return_val=='None'): print("\nERROR: Wrong input Value, change the conversion type ( value:",val," index:",values.index(val),")")
+                if(val < 1 and val != 0):
+                    if(self._return_val == False):
+                        print("\nERROR: Wrong input Value, change the conversion type ( value:", 
+                            val, " index:", values.index(val), ")")
                     return None
-                dec_text=dec_text+precision_txt.format(val/(2**(word_len-(word_len-frac_len))))+","
-                hex_text=hex_text+("0x"+hex(val)[2:].zfill(int(word_len/4)))+","
-                bin_text=bin_text+("0b"+bin(val)[2:].zfill(word_len))+","
-                if(return_val!='None'): 
-                    out_vals.append(round((val/(2**(word_len-(word_len-frac_len)))),precision))
+                dec_text = dec_text + precision_txt.format(val/(2**(self._word_len - (self._word_len - 
+                    self._frac_len)))) + ","
+                hex_text = hex_text + ("0x" + hex(val)[2:].zfill(int(self._word_len/4))) + ","
+                bin_text = bin_text + ("0b" + bin(val)[2:].zfill(self._word_len)) + ","
+                if(self._return_val != False): 
+                    out_vals.append(round((val/(2**(self._word_len - (self._word_len - self._frac_len)))), 
+                        precision))
 
         #Output values
-        if(return_val=='None'):
-            print("\n-Bin values:",bin_text[:-1])
-            print("\n-Hex values:",hex_text[:-1])
-            print("\n-Dec values:",dec_text[:-1])
+        if(self._return_val == False):
+            print("\nConverted values:")
+            print("-Bin (Input):", bin_text[:-1])
+            print("-Hex (Input):", hex_text[:-1])
+            print("-Dec (Output):", dec_text[:-1])
 
         #Returning values
-        if(return_val=='Dec'): return out_vals
-        elif(return_val=='Hex'): return hex_text[:-1]
-        elif(return_val=='Bin'): return bin_text[:-1]
+#         if(self._return_val=='Dec'): return out_vals
+#         elif(self._return_val=='Hex'): return hex_text[:-1]
+#         elif(self._return_val=='Bin'): return bin_text[:-1]
 
     # Class call method
     def __call__(self, value):
@@ -305,6 +335,7 @@ class fi:
         # Printing header if return_val is False
         if not self._return_val:
             print("\nPYTHON FIXED POINT CONVERTER\n")
+            print("Configuration:")
             if(self._fixed):
                 print("-Type of conversion:","Floating to fixed point")
             else: 
@@ -315,8 +346,6 @@ class fi:
                 print("-Signedness:","Unsigned")
             print("-Total bits:", self._word_len)
             print("-Fractional bits:", self._frac_len)
-            print("-Exponent bits:", self._word_len-self._frac_len)
-
 
         #Converting input type to list
         if(type(value) == int or type(value) == float):
@@ -324,8 +353,8 @@ class fi:
         else:
             values = value
 
-        return 0
         # Float to fixed point conversion
+        converted_values = {}
         if(self._fixed):
             converted_values = self._convert_to_fixed(values)
         # Fixed to floating point conversion
