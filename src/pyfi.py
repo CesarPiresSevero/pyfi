@@ -1,8 +1,11 @@
+"""
 ###################################################################################################
 #                                                                                                 #
 #                                    Python Fixed Point                                           #
 #                                                                                                 #
 ###################################################################################################
+Test
+"""
 
 import math
 
@@ -22,7 +25,7 @@ class fi:
         fixed: bool, optional
             Format used for convertion
                 True = Floating to fixed point
-                False = Fixed to floating point 
+                False = Fixed to floating point
         return_val: bool, optional
             Selects type of output, return values or print
             on the console
@@ -35,10 +38,10 @@ class fi:
         __call__(value):
             Prints or returns the value converted to desired format
     """
-    
+
     # Class constructor
-    def __init__(self, signed=True, word_len=32, frac_len=31, 
-            fixed=True, return_val=False):
+    def __init__(self, signed=True, word_len=32, frac_len=31,
+                 fixed=True, return_val=False):
         """
         Sets default word and fractional bits checking inputs
 
@@ -53,7 +56,7 @@ class fi:
             fixed: bool, optional
                 Format used for convertion.
                 True = Floating to fixed point
-                False = Fixed to floating point 
+                False = Fixed to floating point
             return_val: bool, optional
                 Selects type of output, return values or print
                 on the console
@@ -160,8 +163,9 @@ class fi:
                     #Check if value is above the limit
                     if(val > limit_val):
                         if(self._return_val == False): 
-                            print("\nERROR: Value is too high, range from", limit_val, "to",
-                                -limit_val, " ( value:", val, " index:", values.index(val),")")
+                            print("\nERROR: Value is too high, possible range from", 
+                                  limit_val, "to", -limit_val, " ( value:", val, 
+                                  " index:", values.index(val),")")
                         return None
                     elif(val == limit_val):
                         check_val = round((limit_val - 1 / (2**self._word_len)), precision) 
@@ -292,8 +296,8 @@ class fi:
                         print("\nERROR: Wrong input Value, change the conversion type ( value:", 
                             val, " index:", values.index(val), ")")
                     return None
-                dec_text = dec_text + precision_txt.format(val/(2**(self._word_len - (self._word_len - 
-                    self._frac_len)))) + ","
+                dec_text = dec_text + precision_txt.format(val/(2**(self._word_len - (
+                    self._word_len - self._frac_len)))) + ","
                 hex_text = hex_text + ("0x" + hex(val)[2:].zfill(int(self._word_len/4))) + ","
                 bin_text = bin_text + ("0b" + bin(val)[2:].zfill(self._word_len)) + ","
                 if(self._return_val != False): 
