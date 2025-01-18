@@ -10,9 +10,8 @@ The main.py file contains 2 examples using terminal print and return values opti
 
 ## Donations
 
-We believe in free and open source software. Help us continue with our mission.
+We believe in **free and open source software**. Help us continue with our mission.
 
-If you think this library is useful, buy me a coffee!
 
 ## Installation
 
@@ -45,7 +44,7 @@ PyFi library can be imported as shown below:
 from pyfi import fi
 ```
 
-The Fi class has only it's callable method (__call__) with only one input variable (value). Class attributes can be set with constructor or with getters and setters.
+The Fi class has only it's callable method (dunder call dunder) with only one input variable (value). Class attributes can be set with constructor or with getters and setters.
 
 Configuring the class with constructor:
 
@@ -74,16 +73,26 @@ The output should be printed in the console as shown below:
 <blockquote>
 PYTHON FIXED POINT CONVERTER
 
+
 Configuration:
+
 -Type of conversion: Floating to fixed point
+
 -Signedness: Signed
+
 -Total bits: 32
+
 -Fractional bits: 31
+
 WARNING: 1.0 can not be represented, 0.99999999977 will be used instead ( index: 0 )
 
+
 Converted values:
+
 -Dec (Input): 0.99999999977
+
 -Hex (Output): 0x7fffffff
+
 -Bin (Output): 0b01111111111111111111111111111111
 </blockquote>
 
@@ -97,31 +106,31 @@ FI class is the only class included with the PyFi at the moment. It's main purpo
 
 Below are described the FI class attributes. As explained on the usage section, they can be set via constructor or via setters.
 
-* signed : bool, optional
+* **signed** : bool, optional
     
 Signedess of the fixed-point format. True for signed and False for unsigned.
 
 Default is signed (True).
 
-* word_len : int, optional
+* **word_len** : int, optional
 
 Number of bits used to represent the value. Usual values are 64, 32 or 16 bits.
 
 Default is 32 bit.
 
-* frac_len : int, optional
+* **frac_len** : int, optional
 
 Fractional bits (mantissa). The more fractional bits, the more precision the fixed-point representation will have. 
 
 Default is 31 bit (Q31).
 
-* fixed: bool, optional
+* **fixed** : bool, optional
 
 Format used for conversion. True for floating-point to fixed-point conversion and False for fixed-point to floating-point conversion.
 
 Default is fixed-point to floating-point conversion (True).
 
-* return_val: bool, optional
+* **return_val** : bool, optional
 
 Selects type of output, return values or print on the console.
 
@@ -129,9 +138,9 @@ Default is print on console (False).
 
 ### Methods
 
-Fi class has only one method for the user, the called instance (__call__). This was done to facilitate usage. The method only has one input:
+Fi class has only one method for the user, the called instance. This was done to facilitate usage. The method only has one input:
 
-* value: list,float,int
+* **value** : list,float,int
    
 The value to be converted. It supports a list of floats, a list of integers, a float or a integer. The format will depend on the user configuration. The library will return an error if the input is not in the proper format.
 
