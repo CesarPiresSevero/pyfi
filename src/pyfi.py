@@ -1,8 +1,11 @@
+"""
 ###################################################################################################
 #                                                                                                 #
 #                                    Python Fixed Point                                           #
 #                                                                                                 #
 ###################################################################################################
+Test
+"""
 
 import math
 
@@ -22,7 +25,7 @@ class fi:
         fixed: bool, optional
             Format used for convertion
                 True = Floating to fixed point
-                False = Fixed to floating point 
+                False = Fixed to floating point
         return_val: bool, optional
             Selects type of output, return values or print
             on the console
@@ -35,10 +38,10 @@ class fi:
         __call__(value):
             Prints or returns the value converted to desired format
     """
-    
+
     # Class constructor
-    def __init__(self, signed=True, word_len=32, frac_len=31, 
-            fixed=True, return_val=False):
+    def __init__(self, signed=True, word_len=32, frac_len=31,
+                 fixed=True, return_val=False):
         """
         Sets default word and fractional bits checking inputs
 
@@ -53,7 +56,7 @@ class fi:
             fixed: bool, optional
                 Format used for convertion.
                 True = Floating to fixed point
-                False = Fixed to floating point 
+                False = Fixed to floating point
             return_val: bool, optional
                 Selects type of output, return values or print
                 on the console

@@ -6,6 +6,7 @@
 
 from pyfi import fi
 
+
 def simple_call():
     """
     Example usage of the PyFi library just printing on terminal.
@@ -17,6 +18,7 @@ def simple_call():
     # Converting fixed to float
     fi_obj.fixed = False
     fi_obj(0xdeadbeef)
+
 
 def precision_loss():
     """
@@ -32,7 +34,7 @@ def precision_loss():
     initial_value = 1.0
     value = initial_value
     iterations = 20
-    print("Multiplying", value, "(16 bit signed) by itself", 
+    print("Multiplying", value, "(16 bit signed) by itself",
           iterations, "times:")
     for i in range(iterations):
         fi_obj.fixed = True
@@ -44,7 +46,7 @@ def precision_loss():
 
     # Calculating final error
     error = ((value - initial_value)/initial_value) * 100
-    print("Final error =", round(error,2), "%")
+    print("Final error =", round(error, 2), "%")
 
 
 if __name__ == "__main__":
@@ -57,4 +59,3 @@ if __name__ == "__main__":
     print("2: ", precision_loss.__doc__)
     precision_loss()
     print(100 * "-")
-
