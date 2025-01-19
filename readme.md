@@ -11,9 +11,9 @@ The main.py file contains 2 examples using terminal print and return values opti
 ## Donations
 
 I believe in **free and open source software**! Help the OSS community by donating below:
-
-[<img src="img/paypal_button.png">](https://www.paypal.com/donate/?hosted_button_id=AMFZ83MA4Z3RA)
-
+<p align="center">
+[<img src="img/paypal_button.png" width="400" height="228">](https://www.paypal.com/donate/?hosted_button_id=AMFZ83MA4Z3RA)
+</p>
 
 ## Installation
 
