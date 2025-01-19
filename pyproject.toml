@@ -1,8 +1,8 @@
 [project]
 name = "pyfi"
-version = "0.1.0"
-description = "Fixed point converter with range checks"
-authors = [{name = "Cesar Severo"}]
+version = "1.0.0"
+description = "Python Fixed-point Library"
+authors = [{name = "Cesar Pires Severo"}]
 license = {file = "license.txt"}
 readme = "readme.md"
 keywords = [
@@ -15,7 +15,7 @@ keywords = [
 requires-python = ">= 3.10"
 dependencies = []
 classifiers = [
-  "Development Status :: 2 - Pre-Alpha",
+  "Development Status :: 3 - Alpha",
   "Natural Language :: English",
   "Operating System :: POSIX :: Linux",
   "Intended Audience :: Science/Research",
